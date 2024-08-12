@@ -12,17 +12,17 @@ const RecentCampaigns: React.FC = () => {
 
   return (
     <section className="mt-52 max-md:mt-10">
-      <h2 className="self-start ml-9 text-base font-bold text-center text-white max-md:ml-2.5">
+      <h2 className="self-start ml-3 text-base font-bold text-white max-md:ml-2.5">
         Recent campaigns
       </h2>
-      <ul className="flex flex-col self-end mt-2.5 mr-0 text-xs text-white">
+      <ul className="flex flex-col self-end mt-2.5 ml-3 text-xs text-white">
         {campaigns.map((campaign, index) => (
           <li key={index} className={index !== 0 ? "mt-1.5" : ""}>
             {campaign}
           </li>
         ))}
       </ul>
-      <button className="flex justify-center items-center px-2 mt-1.5 max-w-full text-xs font-bold leading-none text-center text-white rounded-xl min-h-[36px] w-[216px]">
+      <button className="flex justify-center items-center px-2 mt-1.5 max-w-full bg-slate-950 text-xs font-bold leading-none text-center text-white rounded-xl min-h-[36px] w-[216px]">
         <div className="flex overflow-hidden flex-col justify-center items-center self-stretch my-auto w-14">
           <div className="flex items-center w-full max-w-[56px] min-h-[25px]">
             <div className="overflow-hidden gap-1 self-stretch my-auto w-14">

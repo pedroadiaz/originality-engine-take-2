@@ -5,6 +5,8 @@ import React from "react";
 import Header from "./Header";
 import HistorySection from "./HistorySection";
 import AnalyticsSection from "./AnalyticsSection";
+import { AdResponse } from "@/app/models/AdResponse";
+
 
 const MainContent: React.FC = () => {
   return (

@@ -3,9 +3,15 @@
  */
 import React from "react";
 
-const AssessButton: React.FC = () => {
+interface ButtonProps {
+  onClick: () => void;
+}
+
+const AssessButton: React.FC<ButtonProps> = (
+  { onClick }
+) => {
   return (
-    <button className="flex gap-2 justify-center items-center px-3 py-3.5 max-w-full text-base font-medium leading-none text-center text-white rounded-lg bg-[linear-gradient(264deg,#0F2283_3.87%,#0075FF_103.97%)] mt-[516px] w-[233px] max-md:mt-10">
+    <button onClick={onClick} className="flex gap-2 justify-center items-center px-3 py-3.5 max-w-full text-base font-medium leading-none text-center text-white rounded-lg bg-[linear-gradient(264deg,#0F2283_3.87%,#0075FF_103.97%)] mt-2 w-[233px] max-md:mt-10">
       <span className="self-stretch my-auto">Assess now</span>
       <img
         loading="lazy"
