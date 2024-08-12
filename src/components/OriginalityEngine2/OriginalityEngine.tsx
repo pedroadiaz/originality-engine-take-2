@@ -21,6 +21,7 @@ const OriginalityEngine: React.FC = () => {
   const [idea, setIdea] = useState("");  
   const [oeAssistant, setOeAssistant] = React.useState<OpenAI.Beta.Assistants.Assistant | null>(null);
   const [adResponse, setAdResponse] = React.useState<AdResponse | null>(null);
+  let prompt = "";
 
   useEffect(() => {
     initialize().then((assistant) => {
@@ -34,13 +35,19 @@ const OriginalityEngine: React.FC = () => {
     }
   }, []);
 
-  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => { setIdea(event.target.value); };
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => { 
+    setIdea(event.target.value);
+    prompt = event.target.value;
+   };
 
-  const modifyIdea = (updatedIdea: string) => { setIdea(updatedIdea); };
+  const modifyIdea = (updatedIdea: string) => { 
+    setIdea(updatedIdea);
+    prompt = updatedIdea;
+  };
 
   const handleSubmit = async() => {
     localStorage.clear();
-    const response = await fetch("/api/gemini-chat", { method: "POST", body: JSON.stringify({ prompt: idea }) });
+    const response = await fetch("/api/gemini-chat", { method: "POST", body: JSON.stringify({ prompt: prompt }) });
     const data = await response.json();
     const adResponse = data.response as AdResponse;
     fetch("/api/images", { method: "POST", body: JSON.stringify({ prompt: adResponse?.imagePrompts[0].prompt }) })
@@ -54,15 +61,15 @@ const OriginalityEngine: React.FC = () => {
 
   const handleModify = async() => {
     localStorage.clear();
-    const response = await fetch("/api/gemini-chat", { method: "POST", body: JSON.stringify({ prompt: idea }) });
+    const response = await fetch("/api/gemini-chat", { method: "POST", body: JSON.stringify({ prompt: prompt, history: adResponse }) });
     const data = await response.json();
-    const adResponse = data.response as AdResponse;
+    const whatever = data.response as AdResponse;
     fetch("/api/images", { method: "POST", body: JSON.stringify({ prompt: adResponse?.imagePrompts[0].prompt }) })
     .then((response) => response.json())
     .then((data) => {
-      adResponse.imagePrompts[0].imageUrl = data.image as string;
-      setAdResponse(adResponse);
-      localStorage.setItem("adResponse", JSON.stringify(adResponse));
+      whatever.imagePrompts[0].imageUrl = data.image as string;
+      setAdResponse(whatever);
+      localStorage.setItem("adResponse", JSON.stringify(whatever));
     });
   }
   return (
@@ -73,7 +80,7 @@ const OriginalityEngine: React.FC = () => {
             <div className="flex flex-col grow items-start">
               <div className="flex flex-col items-start py-10 pl-6 w-full max-md:pl-5">
                 <Logo />
-                <IdeaInput onClick={handleSubmit} handleChange={handleChange}/>
+                <IdeaInput onClick={handleSubmit} handleChange={handleChange} modifyIdea={modifyIdea}/>
                 {adResponse && (
                   <OllySuggestion adResponse={adResponse} modifyIdea={modifyIdea} handleModify={handleModify}/>
                 )}
@@ -85,6 +92,18 @@ const OriginalityEngine: React.FC = () => {
               <OriginalityEngineContext.Provider value={adResponse}>
                 <MainContent />
               </OriginalityEngineContext.Provider>
+          )}
+          {!adResponse && (
+              <main className="flex relative flex-col ml-36 w-[100%] max-md:ml-0 max-md:w-full bg-blue-950">
+                <div className="flex flex-col mt-6 self-center w-[40%]">
+                  <img
+                  loading="lazy"
+                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/0d2e5e2e-da5c-451d-b2e0-2c374edff369?placeholderIfAbsent=true&apiKey=3502b91ecd184de6be2f646c5a302933"
+                  alt="Main content visual"
+                  className="object-contain my-auto"
+                />
+              </div>
+            </main>
           )}
           </div>
         </div>
