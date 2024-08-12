@@ -9,6 +9,7 @@ import IdeaInput from "../OriginalityEngine1/IdeaInput";
 import OpenAI from "openai";
 import RecentCampaigns from "./RecentCampaigns";
 import MainContent from "../MainContent";
+import Footer from "../Footer";
 import { AdResponse } from "@/app/models/AdResponse";
 import Logo from "../OriginalityEngine/Logo";
 import OllySuggestion from "../OriginalityEngine/OllySuggestion";
@@ -24,9 +25,13 @@ const OriginalityEngine: React.FC = () => {
   useEffect(() => {
     initialize().then((assistant) => {
       if (assistant) {
+        console.log("Assistant initialized");
         setOeAssistant(assistant);
       }
     });
+    if (localStorage.getItem("adResponse")) {
+      setAdResponse(JSON.parse(localStorage.getItem("adResponse") as string) as AdResponse);
+    }
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => { setIdea(event.target.value); };
@@ -34,44 +39,56 @@ const OriginalityEngine: React.FC = () => {
   const modifyIdea = (updatedIdea: string) => { setIdea(updatedIdea); };
 
   const handleSubmit = async() => {
-    const response = await fetch("/api/ai", { method: "POST", body: JSON.stringify({ prompt: idea }) });
+    localStorage.clear();
+    const response = await fetch("/api/gemini-chat", { method: "POST", body: JSON.stringify({ prompt: idea }) });
     const data = await response.json();
     const adResponse = data.response as AdResponse;
-    setAdResponse(adResponse);
+    fetch("/api/images", { method: "POST", body: JSON.stringify({ prompt: adResponse?.imagePrompts[0].prompt }) })
+    .then((response) => response.json())
+    .then((data) => {
+      adResponse.imagePrompts[0].imageUrl = data.image as string;
+      setAdResponse(adResponse);
+      localStorage.setItem("adResponse", JSON.stringify(adResponse));
+    });
   }
 
   const handleModify = async() => {
-    const response = await fetch("/api/ai", { method: "POST", body: JSON.stringify({ prompt: idea }) });
+    localStorage.clear();
+    const response = await fetch("/api/gemini-chat", { method: "POST", body: JSON.stringify({ prompt: idea }) });
     const data = await response.json();
     const adResponse = data.response as AdResponse;
-    setAdResponse(adResponse);
+    fetch("/api/images", { method: "POST", body: JSON.stringify({ prompt: adResponse?.imagePrompts[0].prompt }) })
+    .then((response) => response.json())
+    .then((data) => {
+      adResponse.imagePrompts[0].imageUrl = data.image as string;
+      setAdResponse(adResponse);
+      localStorage.setItem("adResponse", JSON.stringify(adResponse));
+    });
   }
   return (
     <div className="flex overflow-hidden flex-col bg-slate-900">
-      <div className="flex relative flex-col flex-wrap gap-10 pr-20 w-full min-h-[1155px] max-md:pr-5 max-md:max-w-full">
-        <img
-          loading="lazy"
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/fd7b5ea76ca7d832b50420e87da223a9fd88e1142f55ae3396841578ce336f12?placeholderIfAbsent=true&apiKey=3502b91ecd184de6be2f646c5a302933"
-          alt=""
-          className="object-cover absolute inset-0 size-full"
-        />
-        <main className="flex relative flex-col items-start">
-          <Logo />
-          <IdeaInput onClick={handleSubmit} handleChange={handleChange}/>
+      <div className="w-full max-md:max-w-full">
+        <div className="flex gap-5 max-md:flex-col">
+          <aside className="flex flex-col w-[16%] max-md:ml-0 max-md:w-full">
+            <div className="flex flex-col grow items-start">
+              <div className="flex flex-col items-start py-10 pl-6 w-full max-md:pl-5">
+                <Logo />
+                <IdeaInput onClick={handleSubmit} handleChange={handleChange}/>
+                {adResponse && (
+                  <OllySuggestion adResponse={adResponse} modifyIdea={modifyIdea} handleModify={handleModify}/>
+                )}
+                <RecentCampaigns />
+            </div>
+          </div>
+        </aside>
           {adResponse && (
-            <OllySuggestion adResponse={adResponse} modifyIdea={modifyIdea} handleModify={handleModify}/>
+              <OriginalityEngineContext.Provider value={adResponse}>
+                <MainContent />
+              </OriginalityEngineContext.Provider>
           )}
-          <RecentCampaigns />
-        </main>
-        {adResponse && (
-          <aside className="flex relative flex-col items-center my-auto">
-            <OriginalityEngineContext.Provider value={adResponse}>
-              <MainContent />
-            </OriginalityEngineContext.Provider>
-          </aside>
-        )}
-
-      </div>
+          </div>
+        </div>
+      <Footer />
     </div>
   );
 };

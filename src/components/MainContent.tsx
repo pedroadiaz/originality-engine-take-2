@@ -5,12 +5,11 @@ import React from "react";
 import Header from "./Header";
 import HistorySection from "./HistorySection";
 import AnalyticsSection from "./AnalyticsSection";
-import { AdResponse } from "@/app/models/AdResponse";
 
 
 const MainContent: React.FC = () => {
   return (
-    <main className="flex flex-col ml-5 w-[84%] max-md:ml-0 max-md:w-full">
+    <main className="flex relative flex-col ml-5 w-[84%] max-md:ml-0 max-md:w-full">
       <div className="flex flex-col mt-6 w-full max-md:max-w-full">
         <Header />
         <HistorySection />
