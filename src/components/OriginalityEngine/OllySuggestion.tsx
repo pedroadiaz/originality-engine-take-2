@@ -16,7 +16,7 @@ const OllySuggestion: React.FC<SuggestionsProps> = ({ adResponse, modifyIdea, ha
   const mainPoint1 = adResponse?.suggestedIdeas && adResponse?.suggestedIdeas[0] && adResponse?.suggestedIdeas[0].mainPoint ? adResponse.suggestedIdeas[0].mainPoint : "";
 
   const handleUpdatedPrompt1 = () => {
-    modifyIdea(mainPoint1!);
+    modifyIdea(suggestion!);
     handleModify();
   }
   

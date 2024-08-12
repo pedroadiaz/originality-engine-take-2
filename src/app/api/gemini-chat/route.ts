@@ -1,3 +1,4 @@
+import { AdResponse } from '@/app/models/AdResponse';
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { NextRequest, NextResponse } from "next/server";
 
@@ -49,8 +50,30 @@ const model = genAI.getGenerativeModel({
 export const POST = async (req: NextRequest) => {
     const body = await req.json();
     const prompt = body.prompt;
+    const lastChat = body.history as AdResponse;
 
-    const result = await model.generateContent(prompt);
-    console.log(result.response.text());
-    return NextResponse.json( { response: JSON.parse(result.response.text())} );
+    if (lastChat) {
+      const history = [
+        {
+          role: "user",
+          parts: [ { text: prompt } ],
+        },
+        {
+          role: "model",
+          parts: [ { text: JSON.stringify(lastChat) } ]
+        }
+      ];
+      const chat = model.startChat({ history: history });
+      const result = await chat.sendMessage(prompt);
+      console.log(result.response.text());
+      const response = JSON.parse(result.response.text()) as AdResponse;
+      response.prompt = prompt;
+      return NextResponse.json( { response: response } );
+    } else {
+      const result = await model.generateContent(prompt);
+      console.log(result.response.text());
+      const response = JSON.parse(result.response.text()) as AdResponse;
+      response.prompt = prompt;
+      return NextResponse.json( { response: response } );
+    }
 }

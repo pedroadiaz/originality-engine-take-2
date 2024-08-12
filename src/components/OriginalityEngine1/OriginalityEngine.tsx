@@ -19,7 +19,6 @@ const OriginalityEngine: React.FC = () => {
         />
         <div className="flex relative flex-col items-start">
           <Header />
-          <IdeaInput />
           <RecentCampaigns />
           <MainContent />
         </div>
