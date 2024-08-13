@@ -9,7 +9,7 @@ const Header: React.FC = () => {
   return (
     <header className="flex gap-5 justify-between mr-7 w-full max-w-[1594px] max-md:mr-2.5 max-md:max-w-full">
       <div className="flex flex-wrap flex-auto gap-9 px-4 py-4 rounded-xl shadow-[0px_4px_6px_rgba(0,0,0,0.02)]">
-        <h1 className="text-3xl font-bold text-center text-white">v7</h1>
+        <h1 className="text-3xl font-bold text-center text-white">v1</h1>
         <p className="flex-auto text-sm leading-5 text-zinc-300 max-md:max-w-full">
           {adResponse?.prompt}
         </p>
