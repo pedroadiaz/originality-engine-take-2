@@ -47,7 +47,7 @@ const OriginalityEngine: React.FC = () => {
 
   const handleSubmit = async() => {
     localStorage.clear();
-    const response = await fetch("/api/gemini-chat", { method: "POST", body: JSON.stringify({ prompt: prompt }) });
+    const response = await fetch("/api/gemini-chat", { method: "POST", body: JSON.stringify({ prompt: idea }) });
     const data = await response.json();
     const adResponse = data.response as AdResponse;
     fetch("/api/images", { method: "POST", body: JSON.stringify({ prompt: adResponse?.imagePrompts[0].prompt }) })

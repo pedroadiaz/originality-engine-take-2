@@ -19,6 +19,11 @@ const OllySuggestion: React.FC<SuggestionsProps> = ({ adResponse, modifyIdea, ha
     modifyIdea(suggestion!);
     handleModify();
   }
+
+  const clearSearch = () => {
+    localStorage.clear();
+    adResponse = null;
+  }
   
   return (
     <>
@@ -26,6 +31,7 @@ const OllySuggestion: React.FC<SuggestionsProps> = ({ adResponse, modifyIdea, ha
         <div>Olly&apos;s suggestion</div>
         <img
           loading="lazy"
+          onClick={clearSearch}
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/15e5015491bda0b0d50d8ac2b31976fd729eec5cb6e6492353ebc3102fcb9be8?placeholderIfAbsent=true&apiKey=3502b91ecd184de6be2f646c5a302933"
           alt=""
           className="object-contain shrink-0 aspect-square w-[18px]"
